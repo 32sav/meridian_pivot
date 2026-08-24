@@ -128,3 +128,79 @@ The sender creates a signature using a secret and information from the request. 
 If the verification succeeds, the application can continue processing the webhook. If it fails, the application should reject the request and should not perform the action associated with it.
 
 The important lesson I have learned is that receiving a request does not automatically mean that the request should be trusted.
+
+## 10. Detailed Research Findings
+ ### 10.1 Signature Generation
+
+The prototype will use HMAC with SHA-256. The sender combines the shared secret with the exact request body to produce a signature. The receiver repeats the calculation using the same secret and body
+
+### 10.2 Signature Header
+
+X-Hub-Signature-256
+
+### 10.3 Raw Request Body
+
+The signature must be calculated against the original request body. We shouldn't parse the JSON first and then reconstruct it, because even small changes in formatting or representation can produce different data and therefore a different signature.
+
+### 10.4 Python Tools
+
+hmac
+hashlib
+
+### 10.5 Safe Signature Comparison
+
+hmac.compare_digest()
+
+### 10.6 Failed Verification
+
+If the signature is missing or doesn't match the calculated signature, the application must reject the webhook and must not process the event
+
+### 10.7 Testing Strategy
+
+Correct signature → accepted
+Incorrect signature → rejected
+Missing signature → rejected
+Modified request body → rejected
+
+## 11. Prototype Design
+
+ ### 11.1. Objective
+
+The objective of the prototype is to demonstrate how a Python application can receive a webhook and verify its signature before trusting or processing the information. The prototype should accept legitimate webhook requests and reject requests that fail verification.
+
+### Input
+
+The prototype will receive an HTTP POST request containing a webhook payload. The request will also contain a signature in the `X-Hub-Signature-256` header. The application will use a shared secret to verify the signature.
+
+### Verification Process
+
+The application will first obtain the original request body and the signature from the request header. It will use the shared secret and HMAC-SHA256 to calculate the expected signature. The expected signature will then be safely compared with the received signature.
+
+The webhook will only be considered valid when the signatures match.
+
+### Valid Request
+
+When the received signature matches the signature calculated by the application, the webhook will be accepted. The prototype will then process the event and return a successful response.
+
+### Invalid Request
+
+When the received signature does not match the calculated signature, the webhook will be rejected. The application must not process the event.
+
+### Missing Signature
+
+If the webhook does not contain the required signature header, the application will reject the request because it cannot verify where the request came from.
+
+### Modified Payload
+
+If the payload is changed after the signature was created, the calculated signature should no longer match the received signature. The prototype should therefore reject the modified request.
+
+### Expected Responses
+
+A correctly verified webhook should receive a successful response. A webhook with an invalid or missing signature should receive a rejection response. The response should make it clear whether the verification succeeded or failed.
+
+### Test Cases
+
+1. A valid webhook with the correct signature should be accepted.
+2. A webhook with an incorrect signature should be rejected.
+3. A webhook without a signature should be rejected.
+4. A webhook whose payload has been modified should be rejected.

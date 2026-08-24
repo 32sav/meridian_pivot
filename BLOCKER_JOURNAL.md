@@ -1,39 +1,22 @@
-# Learning & Blocker Journal — Webhook Verification
+## Blocker 1 — Python Environment
 
-## Assignment
-Meridian Pivot — Assignment 1
+### Problem
+Python was not available from PowerShell.
 
-## Tool/Concept
-Webhook Verification
+### Commands tested
 
-## Goal
-Build a small working prototype that demonstrates my understanding of webhook verification.
+`python --version`
 
-## Day 1
+Result:
+Python was not found.
 
-### Learning Objectives
-- Understand what webhook verification is.
-- Understand why webhook requests need to be verified.
-- Identify the main components involved in verification.
-- Build a small prototype independently.
+`py --version`
 
-### Research
-| Time | Resource | What I learned |
-|------|----------|----------------|
-|      |          |                |
+Result:
+The term 'py' is not recognized.
 
-### Attempts
-| Time | What I tried | Result |
-|------|--------------|--------|
-|      |              |        |
+### Troubleshooting
+I checked whether Python was available through the Python launcher and the `python` command.
 
-### Blockers
-| Time | Problem/Error | What I tried | Result |
-|------|---------------|--------------|--------|
-|      |               |              |        |
-
-### Lessons Learned
-- 
-
-### Next Step
-- 
+### Current status
+Python is not currently available from PowerShell.
